@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <meta-data android:name="com.kakao.sdk.AppKey" android:value="앱키"/>
+        <meta-data android:name="com.kakao.sdk.AppKey" android:value="네이티브앱키"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>

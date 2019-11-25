@@ -1,67 +1,45 @@
 package com.example.test;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 public class MainActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener{
+    // 검색 키워드
+    private EditText editText;
+    // 찾기 버튼
+    private Button btnSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        editText = findViewById(R.id.editText);
+        btnSearch = findViewById(R.id.btnSearch);
+
         MapView mapView = new MapView(this);
 
-        ViewGroup mapViewContainer = (ViewGroup) findViewById(R.id.map_view);
+        ViewGroup mapViewContainer = findViewById(R.id.map_view);
         mapViewContainer.addView(mapView);
 
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                String result = null;
-                try {
-                    // Open the connection
-                    URL url = new URL("https://dapi.kakao.com/v2/local/search/keyword.json?y=37.514322572335935&x=127.06283102249932&radius=1000&query=abc");
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setRequestMethod("GET");
+        //리스너 등록
+        btnSearch.setOnClickListener(new MyOnClickListener(editText, mapView));
 
-                    conn.setRequestProperty("Authorization", "KakaoAK restapi키");
-                    InputStream is = conn.getInputStream();
 
-                    // Get the stream
-                    StringBuilder builder = new StringBuilder();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        builder.append(line);
-                    }
 
-                    // Set the result
-                    result = builder.toString();
-                }
-                catch (Exception e) {
-                    // Error calling the rest api
-                    Log.e("REST_API", "GET method failed: " + e.getMessage());
-                    e.printStackTrace();
-                }
-
-                Log.d("rest 결과", result);
-
-            }
-        });
+//        AsyncTask.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//            }
+//        });
 
 //        String key = getKeyHash(this);
 //        Log.d("키해시 좀 얻자 제발", key);
@@ -87,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     }
 
-    //    public static String getKeyHash(final Context context) {
+//    public static String getKeyHash(final Context context) {
 //        PackageInfo packageInfo = getPackageInfo(context, PackageManager.GET_SIGNATURES);
 //        if (packageInfo == null)
 //            return null;
