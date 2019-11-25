@@ -30,8 +30,6 @@ public class MyOnClickListener implements View.OnClickListener, Runnable {
 
     @Override
     public void onClick(View v) {
-        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.514322572335935, 127.06283102249932), true);
-
         Thread thread = new Thread(this);
         thread.start();
     }
@@ -44,7 +42,7 @@ public class MyOnClickListener implements View.OnClickListener, Runnable {
             URL url = new URL("https://dapi.kakao.com/v2/local/search/keyword.json?y=37.514322572335935&x=127.06283102249932&radius=1000&query="+editText.getText().toString());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
-            conn.setRequestProperty("Authorization", "KakaoAK 키");
+            conn.setRequestProperty("Authorization", "KakaoAK 앱키");
             InputStream is = conn.getInputStream();
 
             // Get the stream
@@ -67,13 +65,17 @@ public class MyOnClickListener implements View.OnClickListener, Runnable {
         Log.d("rest 결과", resultJson);
 
         Result result = gson.fromJson(resultJson, Result.class);
-        double x = Double.parseDouble(result.getDocuments().get(0).getX());
-        double y = Double.parseDouble(result.getDocuments().get(0).getY());
+        double longitude = Double.parseDouble(result.getDocuments().get(0).getX());
+        double latitude = Double.parseDouble(result.getDocuments().get(0).getY());
 
-        Log.d("위치 = ", "X : " + x + " , Y : " + y );
+        Log.d("위치 = ", "latitude : " + latitude + " , longitude : " + longitude );
+
+        mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(37.514322572335935, 127.06283102249932), true);
 
         MapPOIItem poiItem = new MapPOIItem();
-        poiItem.setMapPoint(MapPoint.mapPointWithGeoCoord(x, y));
+        poiItem.setItemName(result.getDocuments().get(0).getPlaceName());
+        poiItem.setMapPoint(MapPoint.mapPointWithGeoCoord(latitude, longitude));
+        poiItem.setMarkerType(MapPOIItem.MarkerType.BluePin);
         mapView.addPOIItem(poiItem);
     }
 }
